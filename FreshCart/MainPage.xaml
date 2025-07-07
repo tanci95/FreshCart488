@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FreshCart.MainPage"
+             Title="Grocery Inventory">
+
+    <!--<VerticalStackLayout Padding="20">
+        <Label Text="FreshCart - Grocery Inventory"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <Entry x:Name="ItemEntry"
+               Placeholder="Enter grocery item"
+               WidthRequest="300" />
+
+        <Button Text="Add Item"
+                Clicked="OnAddItemClicked" />
+
+        <CollectionView x:Name="GroceryListView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <HorizontalStackLayout Padding="10">
+                        <Label Text="{Binding}" FontSize="18" />
+                    </HorizontalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+
+</ContentPage>-->
+    <VerticalStackLayout Padding="20" Spacing="10">
+
+        <Label Text="Add Grocery Item" FontSize="20" />
+
+        <Entry x:Name="ItemNameEntry" Placeholder="Item name" />
+        <Entry x:Name="ItemQuantityEntry" Placeholder="Quantity" Keyboard="Numeric" />
+
+        <Button Text="Add Item" Clicked="OnAddItemClicked" />
+
+        <Label Text="Inventory List" FontSize="20" Margin="0,20,0,0"/>
+
+        <CollectionView x:Name="GroceryListView" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="Gray" Padding="10" Margin="5">
+                        <HorizontalStackLayout VerticalOptions="Center">
+                            <Label Text="{Binding Name}" FontSize="16" WidthRequest="120"/>
+                            <Label Text="{Binding Quantity}" FontSize="16" WidthRequest="40"/>
+                            <Button Text="+" Clicked="OnIncreaseClicked" CommandParameter="{Binding .}" />
+                            <Button Text="-" Clicked="OnDecreaseClicked" CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>
+
+
