@@ -1,77 +1,61 @@
 ﻿//using System.Collections.ObjectModel;
+using System.Text;
+//using AndroidX.Lifecycle;
 using FreshCart.Models;
 using FreshCart.Services;
+using FreshCart.ViewModels;
+
 
 namespace FreshCart;
+    //public List<GroceryGroup> GroupedItem { get; set; }
+    public partial class MainPage : ContentPage
+    {
+    private GroceryViewModel viewModel;
 
-//public partial class MainPage : ContentPage
-//{
-//    private ObservableCollection<string> GroceryItems = new();
-
-//    public MainPage()
-//    {
-//        InitializeComponent();
-//        GroceryListView.ItemsSource = GroceryItems;
-//    }
-
-//    private void OnAddItemClicked(object sender, EventArgs e)
-//    {
-//        if (!string.IsNullOrWhiteSpace(ItemEntry.Text))
-//        {
-//            GroceryItems.Add(ItemEntry.Text);
-//            ItemEntry.Text = string.Empty;
-//        }
-
-//    }
-//}
-public partial class MainPage : ContentPage
-{
     public MainPage()
-    {
-        InitializeComponent();
-        LoadItems();
-    }
-
-    private async void LoadItems()
-    {
-        GroceryListView.ItemsSource = await App.Database.GetItemsAsync();
-    }
-
-    private async void OnAddItemClicked(object sender, EventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(ItemNameEntry.Text) || string.IsNullOrWhiteSpace(ItemQuantityEntry.Text))
-            return;
-
-        var item = new GroceryItem
         {
-            Name = ItemNameEntry.Text,
-            Quantity = int.Parse(ItemQuantityEntry.Text)
-        };
+            InitializeComponent();
+            viewModel = new GroceryViewModel();
+            BindingContext = viewModel;
 
-        await App.Database.SaveItemAsync(item);
-        ItemNameEntry.Text = "";
-        ItemQuantityEntry.Text = "";
-        LoadItems();
     }
-
-    private async void OnIncreaseClicked(object sender, EventArgs e)
-    {
-        var button = (Button)sender;
-        var item = (GroceryItem)button.CommandParameter;
-        item.Quantity++;
-        await App.Database.SaveItemAsync(item);
-        LoadItems();
-    }
-
-    private async void OnDecreaseClicked(object sender, EventArgs e)
-    {
-        var button = (Button)sender;
-        var item = (GroceryItem)button.CommandParameter;
-        if (item.Quantity > 0)
+    private async void OnExportClicked(object sender, EventArgs e)
         {
-            item.Quantity--;
-            await App.Database.SaveItemAsync(item);
-            LoadItems();
+            try
+            {
+                var items = await App.Database.GetItemsAsync(); // assumes async DB access
+                var sortedItems = items
+                    .OrderBy(i => i.Category)
+                    .ThenBy(i => i.Name)
+                    .ThenBy(i => i.Quantity)
+                    .ToList();
+
+                var lines = new List<string>();
+                string currentCategory = null;
+
+                foreach (var item in sortedItems)
+                {
+                    if (item.Category != currentCategory)
+                    {
+                        currentCategory = item.Category;
+                        lines.Add($"\n== {currentCategory.ToUpper()} ==");
+                    }
+
+                    lines.Add($"{item.Name} - {item.Quantity}");
+                }
+
+                string fileName = $"GroceryList_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+
+                File.WriteAllLines(filePath, lines);
+
+                await DisplayAlert("Export Successful", $"File saved to:\n{filePath}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Export Failed", ex.Message, "OK");
+            }
         }
     }
-}
+    
+
