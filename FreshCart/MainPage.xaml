@@ -1,60 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:FreshCart.ViewModels"
              x:Class="FreshCart.MainPage"
+             x:Name="MainPageRoot"
              Title="Grocery Inventory">
 
-    <!--<VerticalStackLayout Padding="20">
-        <Label Text="FreshCart - Grocery Inventory"
-               FontSize="24"
-               HorizontalOptions="Center" />
+    <VerticalStackLayout Padding="10">
+        <Label Text="Grocery Inventory" FontSize="24" HorizontalOptions="Center" />
 
-        <Entry x:Name="ItemEntry"
-               Placeholder="Enter grocery item"
-               WidthRequest="300" />
+        <Entry Placeholder="Item Name" Text="{Binding NewItemName}" />
+        <Entry Placeholder="Quantity" Text="{Binding NewItemQuantity}" Keyboard="Numeric" />
+        <Picker Title="Category" SelectedItem="{Binding NewItemCategory}">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Fruit</x:String>
+                    <x:String>Vegetable</x:String>
+                    <x:String>Meat</x:String>
+                    <x:String>Grains</x:String>
+                    <x:String>Other</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+        <Button Text="Add Item" Command="{Binding AddItemCommand}" />
 
-        <Button Text="Add Item"
-                Clicked="OnAddItemClicked" />
+        <Button Text="Export List" Clicked="OnExportClicked" BackgroundColor="DarkGreen" TextColor="White" CornerRadius="12" Padding="10,5" HorizontalOptions="Fill" />
 
-        <CollectionView x:Name="GroceryListView">
+        <CollectionView ItemsSource="{Binding GroupedItems}" IsGrouped="True" Margin="10">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label 
+                    Text="{Binding Category}" 
+                    FontAttributes="Bold" 
+                    FontSize="Medium" 
+                    BackgroundColor="LightGray"
+                    Padding="5"/>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <HorizontalStackLayout Padding="10">
-                        <Label Text="{Binding}" FontSize="18" />
-                    </HorizontalStackLayout>
+                    <Grid Padding="5" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="{Binding Name}" Grid.Column="0" VerticalOptions="Center" />
+                        <Label Text="{Binding Quantity}" Grid.Column="1" VerticalOptions="Center" />
+
+                        <Button 
+                        Text="+" 
+                        Grid.Column="2"
+                        Command="{Binding BindingContext.IncreaseQuantityCommand, Source={x:Reference Name=MainPageRoot}}"
+                        CommandParameter="{Binding .}"
+                        WidthRequest="60"
+                        HeightRequest="30" />
+
+                        <Button 
+                        Text="-" 
+                        Grid.Column="3"
+                        Command="{Binding BindingContext.DecreaseQuantityCommand, Source={x:Reference Name=MainPageRoot}}"
+                        CommandParameter="{Binding .}"
+                        WidthRequest="60"
+                        HeightRequest="30" />
+
+                        <Button 
+                        Text="Delete"
+                        Grid.Column="4"
+                        Command="{Binding BindingContext.DeleteItemCommand, Source={x:Reference Name=MainPageRoot}}"
+                        CommandParameter="{Binding .}"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        WidthRequest="150"
+                        HeightRequest="30"/>
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </VerticalStackLayout>
-
-</ContentPage>-->
-    <VerticalStackLayout Padding="20" Spacing="10">
-
-        <Label Text="Add Grocery Item" FontSize="20" />
-
-        <Entry x:Name="ItemNameEntry" Placeholder="Item name" />
-        <Entry x:Name="ItemQuantityEntry" Placeholder="Quantity" Keyboard="Numeric" />
-
-        <Button Text="Add Item" Clicked="OnAddItemClicked" />
-
-        <Label Text="Inventory List" FontSize="20" Margin="0,20,0,0"/>
-
-        <CollectionView x:Name="GroceryListView" SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="Gray" Padding="10" Margin="5">
-                        <HorizontalStackLayout VerticalOptions="Center">
-                            <Label Text="{Binding Name}" FontSize="16" WidthRequest="120"/>
-                            <Label Text="{Binding Quantity}" FontSize="16" WidthRequest="40"/>
-                            <Button Text="+" Clicked="OnIncreaseClicked" CommandParameter="{Binding .}" />
-                            <Button Text="-" Clicked="OnDecreaseClicked" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
     </VerticalStackLayout>
 </ContentPage>
+<!--<CollectionView ItemsSource="{Binding GroupedItems}" IsGrouped="True" Margin="10">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <StackLayout BackgroundColor="LightGray" Padding="5">
+                            <Label Text="{Binding Category}" FontAttributes="Bold" FontSize="18"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                        <StackLayout Orientation="Horizontal">
+                        <Button 
+                            Text="−" 
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroceryViewModel}}, Path=DecreaseQuantityCommand}" 
+                            CommandParameter="{Binding .}" />
+
+                        <Label 
+                            Text="{Binding Quantity}" 
+                            VerticalOptions="Center" 
+                            HorizontalOptions="Center" />
+
+                        <Button 
+                            Text="+" 
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:GroceryViewModel}}, Path=IncreaseQuantityCommand}" 
+                            CommandParameter="{Binding .}" />
+
+                        --><!--<Label Text="{Binding Name}" WidthRequest="100" />
+                            <Label Text="{Binding Quantity}" WidthRequest="60" />
+                            <Label Text="{Binding Category}" WidthRequest="100" />
+                        <Button Text="+" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IncreaseQuantityCommand}" CommandParameter="{Binding .}" />
+                        <Button Text="-"  Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DecreaseQuantityCommand}" CommandParameter="{Binding .}" />
+                        <Butt--><!--on Text="Delete"  Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteItemCommand}" CommandParameter="{Binding .}" />--><!--
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>-->
+        
+    
+
 
 

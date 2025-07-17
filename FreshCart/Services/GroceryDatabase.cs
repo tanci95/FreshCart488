@@ -5,31 +5,60 @@ namespace FreshCart.Services
 {
     public class GroceryDatabase
     {
-        private readonly SQLiteAsyncConnection _db;
+        private readonly SQLiteAsyncConnection _database;
 
         public GroceryDatabase(string dbPath)
         {
-            _db = new SQLiteAsyncConnection(dbPath);
-            _db.CreateTableAsync<GroceryItem>().Wait();
+            _database = new SQLiteAsyncConnection(dbPath);
+            _database.CreateTableAsync<GroceryItem>().Wait();
         }
 
         public Task<List<GroceryItem>> GetItemsAsync()
         {
-            return _db.Table<GroceryItem>().ToListAsync();
+            return _database.Table<GroceryItem>().ToListAsync();
+        }
+
+        public Task<GroceryItem> GetItemAsync(int id)
+        {
+            return _database.Table<GroceryItem>().Where(i => i.Id == id).FirstOrDefaultAsync();
         }
 
         public Task<int> SaveItemAsync(GroceryItem item)
         {
             if (item.Id != 0)
-                return _db.UpdateAsync(item);
+            {
+                return _database.UpdateAsync(item);
+            }
             else
-                return _db.InsertAsync(item);
+            {
+                return _database.InsertAsync(item);
+            }
         }
 
         public Task<int> DeleteItemAsync(GroceryItem item)
         {
-            return _db.DeleteAsync(item);
+            return _database.DeleteAsync(item);
         }
+        //    private readonly SQLiteAsyncConnection _database;
+
+        //    public GroceryDatabase(string dbPath)
+        //    {
+        //        _database = new SQLiteAsyncConnection(dbPath);
+        //        _database.CreateTableAsync<GroceryItem>().Wait();
+        //    }
+
+        //    public Task<List<GroceryItem>> GetItemsAsync() =>
+        //        _database.Table<GroceryItem>().ToListAsync();
+
+        //    public Task<List<GroceryItem>> GetItemsByCategoryAsync(string category) =>
+        //        _database.Table<GroceryItem>().Where(i => i.Category == category).ToListAsync();
+
+        //    public Task<int> SaveItemAsync(GroceryItem item) =>
+        //        _database.InsertOrReplaceAsync(item);
+
+        //    public Task<int> DeleteItemAsync(GroceryItem item) =>
+        //        _database.DeleteAsync(item);
+        //}
     }
 }
 

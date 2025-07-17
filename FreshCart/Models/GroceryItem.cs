@@ -1,4 +1,7 @@
-﻿using SQLite;
+﻿using System.Collections.ObjectModel;
+using SQLite;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace FreshCart.Models
 {
@@ -10,6 +13,9 @@ namespace FreshCart.Models
         public string Name { get; set; }
 
         public int Quantity { get; set; }
+
+        public string Category { get; set; }
     }
 }
+
 
